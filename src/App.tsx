@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-type Member = {
+type members = {
   id: number;
   name: string;
   email: string;
@@ -30,7 +30,7 @@ function App() {
       <h2>회원 목록</h2>
 
       <button onClick={loadMembers}>
-        리스트 불러오기
+        리스트 불러오기2
       </button>
 
       <ul>
