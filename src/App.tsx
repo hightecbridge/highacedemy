@@ -1,26 +1,42 @@
-import { useEffect, useState } from "react"
+import { useState } from "react";
 
 function App() {
+  const [members, setMembers] = useState([]);
 
-  const [members, setMembers] = useState([])
+  const loadMembers = async () => {
+    try {
+      const res = await fetch("http://13.209.114.196:8080/api/members");
 
-  useEffect(() => {
-    fetch("http://13.209.114.196:8080/api/members")
-      .then(res => res.json())
-      .then(data => setMembers(data))
-  }, [])
+      if (!res.ok) {
+        throw new Error("API 오류: " + res.status);
+      }
+
+      const data = await res.json();
+      setMembers(data);
+
+    } catch (error) {
+      console.error("API 호출 실패:", error);
+    }
+  };
 
   return (
     <div>
-      <h1>Member List</h1>
+      <h2>회원 목록</h2>
 
-      {members.map((m:any) => (
-        <div key={m.id}>
-          {m.name}
-        </div>
-      ))}
+      <button onClick={loadMembers}>
+        리스트 불러오기
+      </button>
+
+      <ul>
+        {members.map((m) => (
+          <li key={m.id}>
+            {m.name} ({m.email})
+          </li>
+        ))}
+      </ul>
+
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
