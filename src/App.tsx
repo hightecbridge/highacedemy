@@ -1,5 +1,11 @@
 import { useState } from "react";
 
+type Member = {
+  id: number;
+  name: string;
+  email: string;
+};
+
 function App() {
   const [members, setMembers] = useState([]);
 
