@@ -15,7 +15,7 @@ function App() {
       setLoading(true);
       setError("");
 
-      const response = await fetch("/api/members");
+      const response = await fetch("http://13.209.114.196:8080/api/members");
 
       if (!response.ok) {
         throw new Error("서버 호출 실패");
