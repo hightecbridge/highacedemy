@@ -1,7 +1,12 @@
 import { useState } from "react";
 
+type Member = {
+  id: number;
+  name: string;
+};
+
 function App() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Member[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -10,16 +15,20 @@ function App() {
       setLoading(true);
       setError("");
 
-      const response = await fetch("http://13.209.114.196:8080/api/members");
+      const response = await fetch("/api/members");
 
       if (!response.ok) {
         throw new Error("서버 호출 실패");
       }
 
-      const result = await response.json();
+      const result: Member[] = await response.json();
       setData(result);
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("알 수 없는 오류가 발생했습니다.");
+      }
     } finally {
       setLoading(false);
     }
