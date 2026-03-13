@@ -1,57 +1,42 @@
-import { useState } from "react";
+import { useState } from 'react'
+import { LoginPage }     from './pages/LoginPage'
+import { DashboardPage } from './pages/DashboardPage'
+import { CoursesPage }   from './pages/CoursesPage'
+import { StudentsPage }  from './pages/StudentsPage'
+import { AttendancePage} from './pages/AttendancePage'
+import { GradesPage }    from './pages/GradesPage'
+import { PaymentsPage }  from './pages/PaymentsPage'
+import { Sidebar }       from './components/layout/Sidebar'
+import { Topbar }        from './components/layout/Topbar'
+import type { PageId }   from './types'
 
-type Member = {
-  id: number;
-  name: string;
-};
+export default function App() {
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [page, setPage]         = useState<PageId>('dashboard')
 
-function App() {
-  const [data, setData] = useState<Member[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const navigate = (p: PageId) => setPage(p)
 
-  const fetchList = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  if (!loggedIn) return <LoginPage onLogin={() => setLoggedIn(true)} />
 
-      const response = await fetch("https://api.dbridgehub.com/api/members");
-
-      if (!response.ok) {
-        throw new Error("서버 호출 실패");
-      }
-
-      const result: Member[] = await response.json();
-      setData(result);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("알 수 없는 오류가 발생했습니다.");
-      }
-    } finally {
-      setLoading(false);
+  const renderPage = () => {
+    switch (page) {
+      case 'dashboard':  return <DashboardPage onNavigate={navigate} />
+      case 'courses':    return <CoursesPage />
+      case 'students':   return <StudentsPage />
+      case 'attendance': return <AttendancePage />
+      case 'grades':     return <GradesPage />
+      case 'payments':   return <PaymentsPage />
+      default:           return <DashboardPage onNavigate={navigate} />
     }
-  };
+  }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>회원 목록 조회</h1>
-
-      <button onClick={fetchList}>리스트 호출</button>
-
-      {loading && <p>불러오는 중...</p>}
-      {error && <p style={{ color: "red" }}>에러: {error}</p>}
-
-      <ul>
-        {data.map((item) => (
-          <li key={item.id}>
-            {item.id} / {item.name}
-          </li>
-        ))}
-      </ul>
+    <div className="app-shell">
+      <Sidebar currentPage={page} onNavigate={navigate} onLogout={() => setLoggedIn(false)} />
+      <div className="main-area">
+        <Topbar currentPage={page} />
+        <main className="main-scroll">{renderPage()}</main>
+      </div>
     </div>
-  );
+  )
 }
-
-export default App;
